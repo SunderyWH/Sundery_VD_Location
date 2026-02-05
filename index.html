@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vending Machine Locator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background:#f4f6f8;
+      padding:20px;
+    }
+
+    .container {
+      max-width:500px;
+      margin:auto;
+      background:#fff;
+      padding:25px;
+      border-radius:10px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align:center;
+      font-size:1.8rem;
+      margin-bottom:20px;
+    }
+
+    input, button {
+      width:100%;
+      padding:16px;
+      margin-top:10px;
+      font-size:1.1rem;
+      border-radius:8px;
+      border:1px solid #ccc;
+    }
+
+    button {
+      background:#007bff;
+      color:white;
+      border:none;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    button:hover {
+      background:#0056b3;
+    }
+
+    .result {
+      margin-top:20px;
+      font-size:1.1rem;
+      line-height:1.5;
+      word-break: break-word;
+    }
+
+    a {
+      color:#007bff;
+      text-decoration:none;
+    }
+
+    a:hover {
+      text-decoration:underline;
+    }
+
+    /* Responsive adjustments for smaller phones */
+    @media (max-width: 400px) {
+      body {
+        padding:10px;
+      }
+
+      .container {
+        padding:15px;
+      }
+
+      h2 {
+        font-size:1.5rem;
+      }
+
+      input, button {
+        font-size:1rem;
+        padding:12px;
+      }
+
+      .result {
+        font-size:1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Vending Machine Location Finder</h2>
+
+  <input type="text" id="machineInput" placeholder="Enter Machine Number (e.g. VM001)">
+  <button onclick="findLocation()">Find Location</button>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  const machines = {
+    "PYA034": {
+      location: "CJCC",
+      map: "https://maps.app.goo.gl/No1mgRLVrkK3JSog9?g_st=ic"
+    },
+    "30J7081": {
+      location: "Premium Barber",
+      map: "https://maps.app.goo.gl/6EZnpYLKMrHQ2QZr5?g_st=ipc"
+    },
+    "30J7089": {
+      location: "Clean24 Toul Sangke",
+      map: "https://maps.app.goo.gl/tGMHrfjfbBZmueTb7?g_st=ic"
+    },
+    "30J0518": {
+      location: "Iwash Beoung trabek",
+      map: "https://maps.app.goo.gl/pZN7MB6JtUJbbC3R8?g_st=ic"
+    },
+    "30J0947": {
+      location: "Clean24 st2002",
+      map: "https://maps.app.goo.gl/wJbwNLBN9uRgdmuw9"
+    },
+    "30J1095": {
+      location: "Baby Outlet Tk",
+      map: "https://maps.app.goo.gl/N6C31TSokAJDgTfT9"
+    },
+    "30J3110": {
+      location: "Baby Outlet Norodom",
+      map: "https://maps.app.goo.gl/N3rLZjvSo8Vg37Ei9"
+    },
+    "30J2994": {
+      location: "VNC",
+      map: "https://maps.app.goo.gl/Q3jPDb1WHmeH76ad6"
+    }
+    "23J5026": {
+      location: "TUX",
+      map: "https://maps.app.goo.gl/CVdNzvzHgZCfFrbP8"
+    }
+    "23J4025": {
+      location: "Preah Yukunthor Highschool",
+      map: "https://maps.app.goo.gl/Kcs5cnENH12jXS7U7"
+    }
+    "23J4006": {
+      location: "Sunflower Wash",
+      map: "https://maps.app.goo.gl/QEqNSJL6oNN9poan9"
+    }
+  "36J3609": {
+      location: "3B Badminton",
+      map: "https://maps.app.goo.gl/R4RckwN61GeHY6jE9"
+    }
+  "36J3139": {
+      location: "CBA",
+      map: "https://maps.app.goo.gl/61wGSoEcGeHDeNLP9"
+    }
+  "36J9583": {
+      location: "EAMU",
+      map: "https://maps.app.goo.gl/WBW7WRmm9Mt19V8KA"
+    }
+  "30J4685": {
+      location: "3Pel",
+      map: "https://maps.app.goo.gl/U47gaWa3A2NLhK5T6?g_st=ic"
+    }
+  "36J2599": {
+      location: "Iwash Chbar Ompov",
+      map: "https://maps.app.goo.gl/ttxyJaMkEpM7zSis9"
+    }
+  "36J2717": {
+      location: "Lucky Pavilion Preah Sihanouk Blvd",
+      map: "https://maps.app.goo.gl/ttxyJaMkEpM7zSis9"
+    }
+  "36J7009": {
+      location: "the Point Mall",
+      map: "https://maps.app.goo.gl/H78NapmXM5dRWaas8"
+    }
+  "36J1669": {
+      location: "Olympic Stadium Ping Pong",
+      map: "https://maps.app.goo.gl/6Qq3WWpSa74eLK287"
+    }
+  "36J0813": {
+      location: "ROKU Restaurant",
+      map: "https://maps.app.goo.gl/MrwDZmbCy95dUzNz5"
+    }
+  "36J8688": {
+      location: "Zando Sen Sok",
+      map: "https://maps.app.goo.gl/Ljn5Gtf7S8UyQJy87"
+    }
+  "30J6286": {
+      location: "Bassac lane",
+      map: "https://maps.app.goo.gl/dJ9mvao2SHoKJJin6"
+    }
+   "30J4830": {
+      location: "Pickle Play Factory Pnhom Penh",
+      map: "https://maps.app.goo.gl/sQp7Gn7AKez8aFn98"
+    }
+  "30J1968": {
+      location: "RiverFront Shopping Center",
+      map: "https://maps.app.goo.gl/gTYDJGd9DPWeWGR99"
+    }
+  "30J1968": {
+      location: "RiverFront Shopping Center",
+      map: "https://maps.app.goo.gl/gTYDJGd9DPWeWGR99"
+    }
+  };
+
+  function findLocation() {
+    const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
+    const resultDiv = document.getElementById("result");
+
+    if (machines[machineNumber]) {
+      resultDiv.innerHTML = `
+        <strong>Location:</strong> ${machines[machineNumber].location}<br><br>
+        <a href="${machines[machineNumber].map}" target="_blank">
+          📍 Open in Google Maps
+        </a>
+      `;
+    } else {
+      resultDiv.innerHTML = "❌ Machine number not found.";
+    }
+  }
+</script>
+
+</body>
+</html>
+
+
