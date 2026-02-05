@@ -11,6 +11,11 @@
       padding:20px;
       margin:0;
     }
+    .logo {
+  display: block;
+  margin: 0 auto 15px;
+  max-width: 150px;
+}
     .container {
       max-width:500px;
       margin:40px auto;
@@ -55,10 +60,17 @@
 </head>
 <body>
   <div class="container">
+    <img src="logo.png" alt="Company Logo" class="logo">
     <h2>Vending Machine Locator</h2>
     <input type="text" id="machineInput" placeholder="Enter Machine Number (e.g., VM001)">
     <button onclick="findLocation()">Find Location</button>
     <div class="result" id="result"></div>
+    .logo {
+  display: block;
+  margin: 0 auto 15px;
+  max-width: 150px;
+}
+
   </div>
 
 <script>
@@ -281,4 +293,5 @@
   </script>
 </body>
 </html>
+
 
