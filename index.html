@@ -2,39 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Vending Machine Locator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vending Machine Locator​</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background:#f4f6f8;
       padding:20px;
+      margin:0;
     }
-
     .container {
       max-width:500px;
-      margin:auto;
+      margin:40px auto;
       background:#fff;
       padding:25px;
       border-radius:10px;
-      box-shadow:0 0 10px rgba(0,0,0,0.1);
+      box-shadow:0 4px 15px rgba(0,0,0,0.1);
     }
-
     h2 {
       text-align:center;
-      font-size:1.8rem;
       margin-bottom:20px;
+      color:#333;
     }
-
     input, button {
       width:100%;
-      padding:16px;
+      padding:12px;
       margin-top:10px;
-      font-size:1.1rem;
-      border-radius:8px;
+      font-size:16px;
+      border-radius:5px;
       border:1px solid #ccc;
     }
-
     button {
       background:#007bff;
       color:white;
@@ -42,61 +39,27 @@
       cursor:pointer;
       transition:0.3s;
     }
-
     button:hover {
       background:#0056b3;
     }
-
     .result {
       margin-top:20px;
-      font-size:1.1rem;
-      line-height:1.5;
-      word-break: break-word;
+      font-size:16px;
+      text-align:center;
     }
-
     a {
       color:#007bff;
       text-decoration:none;
     }
-
-    a:hover {
-      text-decoration:underline;
-    }
-
-    /* Responsive adjustments for smaller phones */
-    @media (max-width: 400px) {
-      body {
-        padding:10px;
-      }
-
-      .container {
-        padding:15px;
-      }
-
-      h2 {
-        font-size:1.5rem;
-      }
-
-      input, button {
-        font-size:1rem;
-        padding:12px;
-      }
-
-      .result {
-        font-size:1rem;
-      }
-    }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <h2>Vending Machine Location Finder​</h2>
-
-  <input type="text" id="machineInput" placeholder="Enter Machine Number (e.g. VM001)">
-  <button onclick="findLocation()">Find Location</button>
-  <div class="result" id="result"></div>
-</div>
+  <div class="container">
+    <h2>Vending Machine Locator</h2>
+    <input type="text" id="machineInput" placeholder="Enter Machine Number (e.g., VM001)">
+    <button onclick="findLocation()">Find Location</button>
+    <div class="result" id="result"></div>
+  </div>
 
 <script>
   const machines = {
@@ -300,28 +263,22 @@
       location: "The Desk-Co Working",
       map: "https://maps.app.goo.gl/wuVdWjx9BpnkTfxE9"
     }
-   
-    }
   };
 
-  function findLocation() {
-    const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
-    const resultDiv = document.getElementById("result");
+   function findLocation() {
+      const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
+      const resultDiv = document.getElementById("result");
 
-    if (machines[machineNumber]) {
-      resultDiv.innerHTML = `
-        <strong>Location:</strong> ${machines[machineNumber].location}<br><br>
-        <a href="${machines[machineNumber].map}" target="_blank">
-          📍 Open in Google Maps
-        </a>
-      `;
-    } else {
-      resultDiv.innerHTML = "❌ Machine number not found.";
+      if (machines[machineNumber]) {
+        resultDiv.innerHTML = `
+          <strong>Location:</strong> ${machines[machineNumber].location}<br><br>
+          <a href="${machines[machineNumber].map}" target="_blank">📍 Open in Google Maps</a>
+        `;
+      } else {
+        resultDiv.innerHTML = "❌ Machine number not found.";
+      }
     }
-  }
-</script>
-
+  </script>
 </body>
 </html>
-
 
