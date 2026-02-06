@@ -279,18 +279,24 @@
     }
   };
   function findLocation() {
-    const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
-    const resultDiv = document.getElementById("result");
+  const input = document.getElementById("machineInput").value.trim().toUpperCase();
+  const resultDiv = document.getElementById("result");
 
-    if (machines[machineNumber]) {
-      resultDiv.innerHTML = `
-        <strong>Location:</strong> ${machines[machineNumber].location}<br><br>
-        <a href="${machines[machineNumber].map}" target="_blank">📍 Open in Google Maps</a>
-      `;
-    } else {
-      resultDiv.innerHTML = "❌ Machine number not found.";
+  if (!input) {
+    resultDiv.innerHTML = "⚠️ Please enter a machine number.";
+    return;
+  }
+
+  if (machines[input]) {
+    resultDiv.innerHTML = `
+      <strong>Location:</strong> ${machines[input].location}<br><br>
+      <a href="${machines[input].map}" target="_blank">📍 Open in Google Maps</a>
+    `;
+  } else {
+    resultDiv.innerHTML = "❌ Machine number not found.";
     }
   }
 </script>
 </body>
 </html>
+
