@@ -64,10 +64,20 @@
       color: #fff;
       cursor: pointer;
       transition: 0.3s;
+      margin-bottom: 10px;
     }
 
     button:hover {
       background: #0056b3;
+    }
+
+    .install-btn {
+      display: none; /* Hidden by default */
+      background: #28a745;
+    }
+
+    .install-btn:hover {
+      background: #218838;
     }
 
     .result {
@@ -90,9 +100,12 @@
     <h2>Vending Machine Locator<br>ស្វែងរកទីតាំងម៉ាស៊ីន</h2>
     <input type="text" id="machineInput" placeholder="Enter Machine Number (e.g., VM001)">
     <button onclick="findLocation()">Find Location</button>
+    
+    <!-- Install App button -->
+    <button class="install-btn" id="installBtn" onclick="installApp()">Install App</button>
+
     <div class="result" id="result"></div>
   </div>
-
 <script>
   const machines = {
     "PYA034": {
@@ -327,13 +340,14 @@
         .catch(err => console.log('Service Worker Failed', err));
     }
 
-    // Handle "Add to Home Screen" prompt
+    // Handle Add to Home Screen (A2HS)
     let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      // Optionally show your own install button
-      console.log('A2HS prompt is ready');
+      installBtn.style.display = 'block'; // Show the install button
     });
 
     function installApp() {
@@ -346,6 +360,7 @@
             console.log('User dismissed the A2HS prompt');
           }
           deferredPrompt = null;
+          installBtn.style.display = 'none'; // Hide the button after install
         });
       }
     }
