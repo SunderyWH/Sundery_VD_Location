@@ -1,52 +1,56 @@
-const CACHE_NAME = 'vm-locator-cache-v1';
+// sw.js
+const CACHE_NAME = 'vm-locator-cache-v2'; // increment this version when you make big changes
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './logo.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  // Add more assets here if you have CSS/JS files
+  '/', // caches your index.html initially
+  '/style.css', // if you have a separate CSS file
+  '/logo.png', // your logo
+  // add other static files here if any
 ];
 
-// Install event — caching assets
 self.addEventListener('install', event => {
-  console.log('[ServiceWorker] Install');
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('[ServiceWorker] Caching app shell');
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Caching app assets...');
+        return cache.addAll(urlsToCache);
+      })
   );
+  self.skipWaiting(); // forces the SW to activate immediately
 });
 
-// Activate event — cleanup old caches
 self.addEventListener('activate', event => {
-  console.log('[ServiceWorker] Activate');
+  // Clean up old caches automatically
   event.waitUntil(
-    caches.keys().then(keyList =>
+    caches.keys().then(keys => 
       Promise.all(
-        keyList.map(key => {
+        keys.map(key => {
           if (key !== CACHE_NAME) {
-            console.log('[ServiceWorker] Removing old cache', key);
+            console.log('Removing old cache:', key);
             return caches.delete(key);
           }
         })
       )
     )
   );
+  self.clients.claim();
 });
 
-// Fetch event — serve cached content when offline
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request).catch(() => {
-        // Optionally, return a fallback page or image when offline
-        if (event.request.destination === 'document') {
-          return caches.match('./index.html');
-        }
-      });
-    })
-  );
+  if (event.request.mode === 'navigate') {
+    // Always try to get fresh index.html from network first
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+  } else {
+    // For other assets, use cache first then network
+    event.respondWith(
+      caches.match(event.request).then(response => {
+        return response || fetch(event.request);
+      })
+    );
+  }
 });
