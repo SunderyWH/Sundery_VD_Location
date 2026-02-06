@@ -7,69 +7,103 @@
 
   <!-- Khmer Font -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#007bff">
 
   <style>
     body {
       font-family: 'Noto Sans Khmer', Arial, sans-serif;
-      background:#007bff;
-      padding:20px;
-      margin:0;
+      background: #007bff;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
+
     .container {
-      max-width:800px;
-      margin:40px auto;
-      background:#fff;
-      padding:25px;
-      border-radius:10px;
-      box-shadow:0 4px 15px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+      background: #fff;
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      text-align: center;
     }
-    h2 {
-      text-align:center;
-      margin-bottom:20px;
-      color:#333;
-    }
-    input, button {
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-      font-size:16px;
-      border-radius:5px;
-      border:1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
-      background:#007bff;
-      color:white;
-      border:none;
-      cursor:pointer;
-      transition:0.3s;
-    }
-    button:hover {
-      background:#0056b3;
-    }
-    .result {
-      margin-top:20px;
-      font-size:16px;
-      text-align:center;
-      word-wrap: break-word;
-    }
-    a {
-      color:#007bff;
-      text-decoration:none;
-    }
+
     .logo {
       display: block;
       margin: 0 auto 15px;
-      max-width: 150px;
+      max-width: 120px;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .install-btn {
+      display: none; /* Hidden by default */
+      background: #28a745;
+    }
+
+    .install-btn:hover {
+      background: #218838;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+      word-break: break-word;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
     <img src="logo.png" alt="Company Logo" class="logo">
     <h2>Vending Machine Locator<br>ស្វែងរកទីតាំងម៉ាស៊ីន</h2>
     <input type="text" id="machineInput" placeholder="Enter Machine Number (e.g., VM001)">
-    <button id="findBtn">Find Location</button>
+    <button onclick="findLocation()">Find Location</button>
+    
+    <!-- Install App button -->
+    <button class="install-btn" id="installBtn" onclick="installApp()">Install App</button>
+
     <div class="result" id="result"></div>
   </div>
 
@@ -280,14 +314,11 @@
       map: "https://maps.app.goo.gl/wuVdWjx9BpnkTfxE9"
     }
   };
-
-    const input = document.getElementById("machineInput");
-    const button = document.getElementById("findBtn");
-    const resultDiv = document.getElementById("result");
-
     function findLocation() {
-      const machineNumber = input.value.trim().toUpperCase();
-      if(machines[machineNumber]) {
+      const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
+      const resultDiv = document.getElementById("result");
+
+      if (machines[machineNumber]) {
         resultDiv.innerHTML = `
           <strong>Location:</strong> ${machines[machineNumber].location}<br><br>
           <a href="${machines[machineNumber].map}" target="_blank">📍 Open in Google Maps</a>
@@ -297,15 +328,42 @@
       }
     }
 
-    // Button click
-    button.addEventListener("click", findLocation);
-
-    // Enter key triggers search
-    input.addEventListener("keypress", function(e) {
-      if(e.key === "Enter") {
-        findLocation();
-      }
+    // ENTER key triggers search
+    document.getElementById("machineInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") findLocation();
     });
+
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch(err => console.log('Service Worker Failed', err));
+    }
+
+    // Handle Add to Home Screen (A2HS)
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block'; // Show the install button
+    });
+
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the A2HS prompt');
+          } else {
+            console.log('User dismissed the A2HS prompt');
+          }
+          deferredPrompt = null;
+          installBtn.style.display = 'none'; // Hide the button after install
+        });
+      }
+    }
   </script>
 </body>
 </html>
