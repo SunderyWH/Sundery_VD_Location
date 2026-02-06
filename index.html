@@ -14,57 +14,77 @@
     body {
       font-family: 'Noto Sans Khmer', Arial, sans-serif;
       background: #007bff;
-      padding: 20px;
+      padding: 0;
       margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
+
     .container {
-      max-width: 800px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    input, button {
       width: 90%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .result {
-      margin-top: 20px;
-      font-size: 16px;
+      max-width: 500px;
+      background: #fff;
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
       text-align: center;
     }
-    a {
-      color: #007bff;
-      text-decoration: none;
-    }
+
     .logo {
       display: block;
       margin: 0 auto 15px;
-      max-width: 150px;
+      max-width: 120px;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+      word-break: break-word;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
     <img src="logo.png" alt="Company Logo" class="logo">
     <h2>Vending Machine Locator<br>ស្វែងរកទីតាំងម៉ាស៊ីន</h2>
@@ -281,7 +301,7 @@
     }
   };
 
-  function findLocation() {
+ function findLocation() {
       const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
       const resultDiv = document.getElementById("result");
 
@@ -295,7 +315,7 @@
       }
     }
 
-    // Make ENTER key trigger the search
+    // ENTER key triggers search
     document.getElementById("machineInput").addEventListener("keypress", function(e) {
       if (e.key === "Enter") findLocation();
     });
@@ -306,9 +326,33 @@
         .then(() => console.log('Service Worker Registered'))
         .catch(err => console.log('Service Worker Failed', err));
     }
+
+    // Handle "Add to Home Screen" prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Optionally show your own install button
+      console.log('A2HS prompt is ready');
+    });
+
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the A2HS prompt');
+          } else {
+            console.log('User dismissed the A2HS prompt');
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
   </script>
 </body>
 </html>
+
 
 
 
