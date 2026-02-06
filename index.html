@@ -82,6 +82,7 @@
   </div>
 
 <script>
+  // Machines data
   const machines = {
     "PYA034": {
       location: "CJCC",
@@ -288,29 +289,40 @@
       map: "https://maps.app.goo.gl/wuVdWjx9BpnkTfxE9"
     }
   };
-function findLocation() {
-    const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
-    const resultDiv = document.getElementById("result");
+// Find location function
+    function findLocation() {
+      const machineNumber = document.getElementById("machineInput").value.trim().toUpperCase();
+      const resultDiv = document.getElementById("result");
 
-    if (machines[machineNumber]) {
-      resultDiv.innerHTML = `
-        <strong>Location:</strong> ${machines[machineNumber].location}<br><br>
-        <a href="${machines[machineNumber].map}" target="_blank">📍 Open in Google Maps</a>
-      `;
-    } else {
-      resultDiv.innerHTML = "❌ Machine number not found.";
+      if (machines[machineNumber]) {
+        resultDiv.innerHTML = `
+          <strong>Location:</strong> ${machines[machineNumber].location}<br><br>
+          <a href="${machines[machineNumber].map}" target="_blank">📍 Open in Google Maps</a>
+        `;
+      } else {
+        resultDiv.innerHTML = "❌ Machine number not found.";
+      }
     }
-  }
 
-  // Register service worker (keeps PWA functionality)
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Service Worker Registered'))
-      .catch((err) => console.log('Service Worker Failed', err));
-  }
-</script>
+    // Enter key works
+    function checkEnter(event) {
+      if(event.key === "Enter") {
+        findLocation();
+      }
+    }
+
+    // Optional: unregister old service workers to prevent caching issues
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
 </body>
 </html>
+
 
 
 
