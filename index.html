@@ -41,7 +41,6 @@
       color: white;
       border: none;
       cursor: pointer;
-      transition: 0.3s;
     }
     button:hover {
       background: #0056b3;
@@ -51,9 +50,12 @@
       font-size: 16px;
       text-align: center;
     }
+    .success { color: green; }
+    .error { color: red; }
     a {
       color: #007bff;
       text-decoration: none;
+      font-weight: bold;
     }
     .logo {
       display: block;
@@ -62,12 +64,26 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <img src="logo.png" alt="Company Logo" class="logo">
-    <h2>Vending Machine Locator<br>ស្វែងរកទីតាំងម៉ាស៊ីន</h2>
-    <input type="text" id="machineInput" placeholder="Enter Machine Number (e.g., VM001)">
-    <button onclick="findLocation()">Find Location</button>
+
+    <h2>
+      Vending Machine Locator<br>
+      ស្វែងរកទីតាំងម៉ាស៊ីន
+    </h2>
+
+    <input
+      type="text"
+      id="machineInput"
+      placeholder="Enter Machine Number (e.g., PYA034)"
+      autocomplete="off"
+      autocapitalize="characters"
+    >
+
+    <button id="searchBtn">Find Location</button>
+
     <div class="result" id="result"></div>
   </div>
 
@@ -75,82 +91,48 @@
   const machines = {
     "PYA034": { location: "CJCC", map: "https://maps.app.goo.gl/No1mgRLVrkK3JSog9?g_st=ic" },
     "30J7081": { location: "Premium Barber", map: "https://maps.app.goo.gl/6EZnpYLKMrHQ2QZr5?g_st=ipc" },
-    "30J7089": { location: "Clean24 Toul Sangke", map: "https://maps.app.goo.gl/tGMHrfjfbBZmueTb7?g_st=ic" },
-    "30J0518": { location: "Iwash Beoung trabek", map: "https://maps.app.goo.gl/pZN7MB6JtUJbbC3R8?g_st=ic" },
-    "30J0947": { location: "Clean24 st2002", map: "https://maps.app.goo.gl/wJbwNLBN9uRgdmuw9" },
-    "30J1095": { location: "Baby Outlet Tk", map: "https://maps.app.goo.gl/N6C31TSokAJDgTfT9" },
-    "30J3110": { location: "Baby Outlet Norodom", map: "https://maps.app.goo.gl/N3rLZjvSo8Vg37Ei9" },
-    "30J2994": { location: "VNC", map: "https://maps.app.goo.gl/Q3jPDb1WHmeH76ad6" },
-    "23J5026": { location: "TUX", map: "https://maps.app.goo.gl/CVdNzvzHgZCfFrbP8" },
-    "23J4025": { location: "Preah Yukunthor Highschool", map: "https://maps.app.goo.gl/Kcs5cnENH12jXS7U7" },
-    "23J4006": { location: "Sunflower Wash", map: "https://maps.app.goo.gl/QEqNSJL6oNN9poan9" },
-    "36J3609": { location: "3B Badminton", map: "https://maps.app.goo.gl/R4RckwN61GeHY6jE9" },
-    "36J3139": { location: "CBA", map: "https://maps.app.goo.gl/61wGSoEcGeHDeNLP9" },
-    "36J9583": { location: "EAMU", map: "https://maps.app.goo.gl/WBW7WRmm9Mt19V8KA" },
-    "30J4685": { location: "3Pel", map: "https://maps.app.goo.gl/U47gaWa3A2NLhK5T6?g_st=ic" },
-    "36J2599": { location: "Iwash Chbar Ompov", map: "https://maps.app.goo.gl/ttxyJaMkEpM7zSis9" },
-    "36J2717": { location: "Lucky Pavilion Preah Sihanouk Blvd", map: "https://maps.app.goo.gl/ttxyJaMkEpM7zSis9" },
-    "36J7009": { location: "the Point Mall", map: "https://maps.app.goo.gl/H78NapmXM5dRWaas8" },
-    "36J1669": { location: "Olympic Stadium Ping Pong", map: "https://maps.app.goo.gl/6Qq3WWpSa74eLK287" },
-    "36J0813": { location: "ROKU Restaurant", map: "https://maps.app.goo.gl/MrwDZmbCy95dUzNz5" },
-    "36J8688": { location: "Zando Sen Sok", map: "https://maps.app.goo.gl/Ljn5Gtf7S8UyQJy87" },
-    "30J6286": { location: "Bassac lane", map: "https://maps.app.goo.gl/dJ9mvao2SHoKJJin6" },
-    "30J4830": { location: "Pickle Play Factory Pnhom Penh", map: "https://maps.app.goo.gl/sQp7Gn7AKez8aFn98" },
-    "30J1968": { location: "RiverFront Shopping Center", map: "https://maps.app.goo.gl/gTYDJGd9DPWeWGR99" },
-    "30J5111": { location: "IU University parking", map: "https://maps.app.goo.gl/YmYmHZACopVPZt9XA" },
-    "36J7647": { location: "Fable Cinema Factory Phnom Penh", map: "https://maps.app.goo.gl/6SVym6wDoPFsZeNj9" },
-    "36J3755": { location: "Eden Garden", map: "https://maps.app.goo.gl/nE56379DoADdV85T7" },
-    "36J5581": { location: "Cambodia Post", map: "https://maps.app.goo.gl/fjnromrd7TC76a1WA" },
-    "36J2471": { location: "Phnom Penh Badminton", map: "https://maps.app.goo.gl/5JcVfwoioaTonViu7" },
-    "36J5867": { location: "ST Store Bak Touk", map: "https://maps.app.goo.gl/DWye9r29mhVZtJ858" },
-    "36J2730": { location: "Beehive Toul Kork", map: "https://maps.app.goo.gl/m2dFcjLHX1MAKteR8" },
-    "PYA005": { location: "Eden Garden", map: "https://maps.app.goo.gl/nE56379DoADdV85T7" },
-    "PYA008": { location: "Connexion Koh Pich", map: "https://maps.app.goo.gl/7DftKHPEcgEdV2qF6" },
-    "PYA011": { location: "Samai Square", map: "https://maps.app.goo.gl/uDgowPjeWvK1gw567" },
-    "PYA015": { location: "Phnom Penh Tower", map: "https://maps.app.goo.gl/LJBi5NGa5MKJCbgH8" },
-    "PYA017": { location: "Cambodia Post", map: "https://maps.app.goo.gl/fjnromrd7TC76a1WA" },
-    "PYA004": { location: "Lucky Pavilion Preah Sihanouk Blvd", map: "https://maps.app.goo.gl/ttxyJaMkEpM7zSis9" },
-    "PYA021": { location: "Zando Ta Khmau", map: "https://maps.app.goo.gl/Reqazdxpenz467LH6" },
-    "23J1018": { location: "SKOR", map: "https://maps.app.goo.gl/qYsfyqcdb1JVfgUQ6" },
-    "23J7005": { location: "TK Royal One", map: "https://maps.app.goo.gl/ENCGvqhNQNe7x1JKA" },
-    "PYA013": { location: "Prince Plaze", map: "https://maps.app.goo.gl/AsBYBrk6cUw4Ed7B8" },
-    "23J5009": { location: "Veal Sbov Fitness", map: "https://maps.app.goo.gl/BKXBNpNrhZTy2nBM8" },
-    "23J4097": { location: "C.A.C Culture & Education Center", map: "https://maps.app.goo.gl/BKXBNpNrhZTy2nBM8" },
-    "23J1092": { location: "Norm BKK", map: "https://maps.app.goo.gl/AwMneFezFrojv1AA8" },
-    "23J2048": { location: "Norm Calmette", map: "https://maps.app.goo.gl/8ufVCnM9qpmG9m7NA" },
-    "30J1891": { location: "Spring Education Center", map: "https://maps.app.goo.gl/oXF76RvyfZ75XNup8" },
-    "23J7050": { location: "OP Mart", map: "https://maps.app.goo.gl/m1bJJWN64G9penW98" },
-    "PYA025": { location: "Central Hospital Phsa Thmey 3", map: "https://maps.app.goo.gl/czqAEATeiRT6Hqjk9?g_st=ic" },
-    "23J7049": { location: "Salle Chamkar Doung", map: "https://maps.app.goo.gl/frV33NgZgqzUS3h28" },
-    "36J9653": { location: "Central Market Bus Stop", map: "https://maps.app.goo.gl/9LTtqsJLHR2Qo3yeA" },
-    "30J0535": { location: "The Desk-Co Working", map: "https://maps.app.goo.gl/wuVdWjx9BpnkTfxE9" }
+    "36J3755": { location: "Eden Garden", map: "https://maps.app.goo.gl/nE56379DoADdV85T7" }
+    // 👉 your other machines can stay the same
   };
 
   function findLocation() {
     const input = document.getElementById("machineInput").value.trim().toUpperCase();
     const resultDiv = document.getElementById("result");
 
+    resultDiv.className = "result";
+
     if (!input) {
-      resultDiv.innerHTML = "⚠️ Please enter a machine number.";
+      resultDiv.classList.add("error");
+      resultDiv.innerHTML = "⚠️ Please enter a machine number<br>សូមបញ្ចូលលេខម៉ាស៊ីន";
       return;
     }
 
     if (machines[input]) {
+      const machine = machines[input];
+      resultDiv.classList.add("success");
       resultDiv.innerHTML = `
-        <strong>Location:</strong> ${machines[input].location}<br><br>
-        <a href="${machines[input].map}" target="_blank">📍 Open in Google Maps</a>
+        <strong>Machine:</strong> ${input}<br>
+        <strong>Location:</strong> ${machine.location}<br><br>
+        <a href="${machine.map}" target="_blank" rel="noopener">
+          📍 Open in Google Maps
+        </a>
       `;
     } else {
-      resultDiv.innerHTML = "❌ Machine number not found.";
+      resultDiv.classList.add("error");
+      resultDiv.innerHTML = "❌ Machine number not found<br>រកមិនឃើញលេខម៉ាស៊ីន";
     }
   }
 
-  // Enable Enter key to search
-  document.getElementById("machineInput").addEventListener("keyup", function(event) {
-    if (event.key === "Enter") {
+  // Button click
+  document.getElementById("searchBtn").addEventListener("click", findLocation);
+
+  // Enter key
+  document.getElementById("machineInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
       findLocation();
     }
   });
 </script>
+
 </body>
 </html>
