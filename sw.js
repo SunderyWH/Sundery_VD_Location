@@ -1,10 +1,52 @@
-self.addEventListener('install', function(event) {
-  console.log('Service Worker installed');
+const CACHE_NAME = 'vm-locator-cache-v1';
+const urlsToCache = [
+  './',
+  './index.html',
+  './manifest.json',
+  './logo.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  // Add more assets here if you have CSS/JS files
+];
+
+// Install event — caching assets
+self.addEventListener('install', event => {
+  console.log('[ServiceWorker] Install');
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('[ServiceWorker] Caching app shell');
+      return cache.addAll(urlsToCache);
+    })
+  );
 });
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(fetch(event.request));
+// Activate event — cleanup old caches
+self.addEventListener('activate', event => {
+  console.log('[ServiceWorker] Activate');
+  event.waitUntil(
+    caches.keys().then(keyList =>
+      Promise.all(
+        keyList.map(key => {
+          if (key !== CACHE_NAME) {
+            console.log('[ServiceWorker] Removing old cache', key);
+            return caches.delete(key);
+          }
+        })
+      )
+    )
+  );
 });
-self.addEventListener('install', e => console.log('Service Worker Installed'));
-self.addEventListener('activate', e => console.log('Service Worker Activated'));
 
+// Fetch event — serve cached content when offline
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request).catch(() => {
+        // Optionally, return a fallback page or image when offline
+        if (event.request.destination === 'document') {
+          return caches.match('./index.html');
+        }
+      });
+    })
+  );
+});
